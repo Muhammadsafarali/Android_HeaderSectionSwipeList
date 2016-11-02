@@ -25,6 +25,7 @@
     </FrameLayout>
 
     <FrameLayout
+        android:id="@+id/frame"
         android:padding="10dp"
         android:background="#ffffff"
         android:layout_width="match_parent"

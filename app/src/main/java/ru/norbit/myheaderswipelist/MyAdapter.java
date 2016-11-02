@@ -1,11 +1,14 @@
 package ru.norbit.myheaderswipelist;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
@@ -22,18 +25,24 @@ import static android.R.attr.resource;
 
 public class MyAdapter extends ArrayAdapter<String> implements StickyListHeadersAdapter {
 
+    private final Context mContext;
     private final LayoutInflater mInflater;
     private final ViewBinderHelper binderHelper;
 
     public MyAdapter(Context context, List<String> objects) {
         super(context, R.layout.row_list, objects);
+        mContext = context;
         mInflater = LayoutInflater.from(context);
         binderHelper = new ViewBinderHelper();
     }
 
+    private void printMsg(String msg) {
+        Log.e("LOG", msg);
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        final ViewHolder holder;
 
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.row_list, parent, false);
@@ -41,7 +50,16 @@ public class MyAdapter extends ArrayAdapter<String> implements StickyListHeaders
             holder = new ViewHolder();
             holder.text = (TextView) convertView.findViewById(R.id.text);
             holder.swipeLayout = (SwipeRevealLayout) convertView.findViewById(R.id.swipe_layout);
-
+            View frame = convertView.findViewById(R.id.frame);
+            frame.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Toast.makeText(mContext,
+                            "долгое удержание.",
+                            Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
             convertView.setTag(holder);
         }
         else {
@@ -53,7 +71,7 @@ public class MyAdapter extends ArrayAdapter<String> implements StickyListHeaders
             holder.swipeLayout.setSwipeListener(new SwipeRevealLayout.SimpleSwipeListener() {
                 @Override
                 public void onSlide(SwipeRevealLayout view, float slideOffset) {
-                    if (slideOffset >= 0.95) {
+                    if (slideOffset >= 0.6) {
                         view.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -64,12 +82,12 @@ public class MyAdapter extends ArrayAdapter<String> implements StickyListHeaders
                 }
             });
             binderHelper.bind(holder.swipeLayout, item);
-
             holder.text.setText(item);
         }
 
         return convertView;
     }
+
 
     @Override
     public long getHeaderId(int position) {
