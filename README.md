@@ -1,4 +1,4 @@
-# Android_HeaderSectionSwipeList
+# Android Header Section SwipeList
 Android. StickyListHeaders + SwipeRevealLayout
 
 ##Description
